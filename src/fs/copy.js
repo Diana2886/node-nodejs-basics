@@ -1,36 +1,29 @@
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
-import { access, constants, mkdir, readdir, copyFile } from 'fs'
+import { access, constants, mkdir, readdir, copyFile } from 'fs/promises'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+const dir = join(__dirname, 'files')
+const targetDir = join(__dirname, 'files_copy')
+const errorMsg = 'FS operation failed'
+
 const copy = async () => {
-  const dir = join(__dirname, 'files')
-  const targetDir = join(__dirname, 'files_copy')
+  try {
+    const files = await readdir(dir)
 
-  readdir(dir, (err, files) => {
-    if (err) {
-      throw new Error('FS operation failed')
-    }
+    await mkdir(targetDir, { recursive: false })
 
-    mkdir(targetDir, { recursive: false }, (err) => {
-      if (err) {
-        throw new Error('FS operation failed')
-      }
-    })
-
-    files.forEach((file) => {
+    files.forEach(async (file) => {
       const filePath = join(dir, file)
       const targetFilePath = join(targetDir, file)
 
-      const callback = (err) => {
-        if (err) throw err
-      }
-
-      copyFile(filePath, targetFilePath, callback)
+      await copyFile(filePath, targetFilePath)
     })
-  })
+  } catch (err) {
+    throw new Error(errorMsg)
+  }
 }
 
 await copy()
