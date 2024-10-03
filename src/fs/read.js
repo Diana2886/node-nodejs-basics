@@ -1,24 +1,22 @@
-import { access, constants, readFile } from 'node:fs'
+import { access, constants, readFile } from 'fs/promises'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const read = async () => {
-  const dir = join(__dirname, 'files')
-  const filePath = join(dir, 'fileToRead.txt')
+const dir = join(__dirname, 'files')
+const filePath = join(dir, 'fileToRead.txt')
+const errorMsg = 'FS operation failed'
 
-  access(filePath, constants.F_OK, (err) => {
-    if (err) {
-      throw new Error('FS operation failed')
-    } else {
-      readFile(filePath, 'utf-8', (err, data) => {
-        if (err) throw err
-        console.log(data)
-      })
-    }
-  })
+const read = async () => {
+  try {
+    await access(filePath, constants.F_OK)
+    const data = await readFile(filePath, 'utf-8')
+    console.log(data)
+  } catch (err) {
+    throw new Error(errorMsg)
+  }
 }
 
 await read()
