@@ -1,23 +1,21 @@
-import { access, constants, rm } from 'node:fs'
+import { access, constants, rm } from 'fs/promises'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const remove = async () => {
-  const dir = join(__dirname, 'files')
-  const filePath = join(dir, 'fileToRemove.txt')
+const dir = join(__dirname, 'files')
+const filePath = join(dir, 'fileToRemove.txt')
+const errorMsg = 'FS operation failed'
 
-  access(filePath, constants.F_OK, (err) => {
-    if (err) {
-      throw new Error('FS operation failed')
-    } else {
-      rm(filePath, (err) => {
-        if (err) throw err
-      })
-    }
-  })
+const remove = async () => {
+  try {
+    await access(filePath, constants.F_OK)
+    await rm(filePath)
+  } catch (err) {
+    throw new Error(errorMsg)
+  }
 }
 
 await remove()
