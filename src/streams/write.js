@@ -6,11 +6,16 @@ import { stdin } from 'process'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const write = async () => {
-  const dir = join(__dirname, 'files')
-  const filePath = join(dir, 'fileToWrite.txt')
+const dir = join(__dirname, 'files')
+const filePath = join(dir, 'fileToWrite.txt')
 
+const write = async () => {
   const writeStream = createWriteStream(filePath)
+
+  writeStream.on('error', (err) => {
+    console.error('Error writing file:', err.message)
+  })
+
   stdin.pipe(writeStream)
 }
 
