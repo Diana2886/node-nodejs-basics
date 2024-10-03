@@ -14,7 +14,15 @@ const calculateHash = async () => {
   const readStream = createReadStream(filePath)
   const hash = createHash('sha256')
 
+  readStream.on('error', (err) => {
+    console.error('Error reading file:', err.message)
+  })
+
   readStream.pipe(hash).setEncoding('hex').pipe(stdout)
+
+  readStream.on('end', () => {
+    stdout.write('\n')
+  })
 }
 
 await calculateHash()
