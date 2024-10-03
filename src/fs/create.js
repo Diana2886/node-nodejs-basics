@@ -1,27 +1,30 @@
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
-import { access, constants, writeFile } from 'fs'
+import { access, constants, writeFile } from 'fs/promises'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+const dir = join(__dirname, 'files')
+const filePath = join(dir, 'fresh.txt')
+const content = 'I am fresh and young'
+const errorMsg = 'FS operation failed'
+
 const create = async () => {
-  const dir = join(__dirname, 'files')
-  const filePath = join(dir, 'fresh.txt')
-  const content = 'I am fresh and young'
-
-  access(filePath, constants.F_OK, (err) => {
-    if (err) {
-      return
+  try {
+    await access(filePath, constants.W_OK)
+    throw new Error(errorMsg)
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      try {
+        await writeFile(filePath, content)
+      } catch (err) {
+        console.error(err)
+      }
+    } else {
+      console.error(err)
     }
-    throw new Error('FS operation failed')
-  })
-
-  writeFile(filePath, content, (err) => {
-    if (err) {
-      throw err
-    }
-  })
+  }
 }
 
 await create()
