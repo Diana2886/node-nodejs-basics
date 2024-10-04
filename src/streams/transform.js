@@ -1,12 +1,13 @@
 import { stdin, stdout } from 'process'
 import { Transform } from 'stream'
 import { pipeline } from 'stream/promises'
+import * as os from 'os'
 
 const transform = async () => {
   const transformStream = new Transform({
     transform(chunk, _, callback) {
       const reversedChunk = chunk.toString().split('').reverse().join('')
-      callback(null, reversedChunk + '\n')
+      callback(null, reversedChunk + os.EOL)
     },
   })
 
