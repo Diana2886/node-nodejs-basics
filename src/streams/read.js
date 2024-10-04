@@ -12,9 +12,9 @@ const dir = join(__dirname, 'files')
 const filePath = join(dir, 'fileToRead.txt')
 
 const read = async () => {
-  const readStream = createReadStream(filePath)
-
   try {
+    const readStream = createReadStream(filePath)
+
     await pipeline(readStream, stdout, { end: false })
     stdout.write(os.EOL)
   } catch (err) {

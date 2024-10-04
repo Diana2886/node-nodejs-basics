@@ -11,9 +11,9 @@ const dir = join(__dirname, 'files')
 const filePath = join(dir, 'fileToWrite.txt')
 
 const write = async () => {
-  const writeStream = createWriteStream(filePath)
-
   try {
+    const writeStream = createWriteStream(filePath)
+
     await pipeline(stdin, writeStream)
   } catch (err) {
     console.error('Pipeline failed.', err)
