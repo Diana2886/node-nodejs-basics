@@ -3,20 +3,20 @@ import { release, version } from 'os'
 import { createServer as createServerHttp } from 'http'
 import './files/c.js'
 import { fileURLToPath } from 'url'
-import a from './files/a.json' with { type: "json" }
-import b from './files/b.json' with { type: "json" }
+import { createRequire } from 'module'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+const require = createRequire(import.meta.url)
 
 const random = Math.random()
 
 let unknownObject
 
 if (random > 0.5) {
-  unknownObject = a
+  unknownObject = require('./files/a.json')
 } else {
-  unknownObject = b
+  unknownObject = require('./files/b.json')
 }
 
 console.log(`Release ${release()}`)
